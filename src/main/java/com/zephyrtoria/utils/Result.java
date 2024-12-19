@@ -7,5 +7,41 @@
 
 package com.zephyrtoria.utils;
 
-public class Result {
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.Map;
+
+@Data
+@NoArgsConstructor
+public class Result<T> {
+    private Integer code;
+    private String message;
+    private T data;
+
+    protected static <T> Result<T> build(T data) {
+        Result<T> result = new Result<>();
+        if (data != null) {
+            result.data = data;
+        }
+        return result;
+    }
+
+    public static <T> Result<T> build(T body, Integer code, String message) {
+        Result<T> result = build(body);
+        result.code = code;
+        result.message = message;
+        return result;
+    }
+
+    public static <T> Result<T> build(T body, ResultCodeEnum resultCodeEnum) {
+        Result<T> result = build(body);
+        result.code = resultCodeEnum.getCode();
+        result.message = resultCodeEnum.getMessage();
+        return result;
+    }
+
+    public static <T> Result<T> ok(T data) {
+        return build(data, ResultCodeEnum.SUCCESS);
+    }
 }

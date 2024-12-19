@@ -2,6 +2,7 @@ package com.zephyrtoria.mapper;
 
 import com.zephyrtoria.pojo.Succeed;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
 * @author Lenovo
@@ -9,6 +10,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 * @createDate 2024-12-17 19:09:33
 * @Entity com.zephyrtoria.pojo.Succeed
 */
+@Mapper
 public interface SucceedMapper extends BaseMapper<Succeed> {
 
 }
