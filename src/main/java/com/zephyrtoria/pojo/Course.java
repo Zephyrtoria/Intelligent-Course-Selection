@@ -5,7 +5,10 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
+import java.util.Objects;
+
 import lombok.Data;
+import lombok.Getter;
 
 /**
  * @TableName course
@@ -38,4 +41,17 @@ public class Course implements Serializable {
     private Integer limits;
 
     private static final long serialVersionUID = 1L;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Course course = (Course) o;
+        return Objects.equals(courseBasicId, course.courseBasicId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(courseBasicId);
+    }
 }

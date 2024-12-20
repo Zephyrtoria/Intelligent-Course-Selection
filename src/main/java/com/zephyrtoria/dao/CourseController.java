@@ -30,4 +30,16 @@ public class CourseController {
         System.out.println("result = " + result);
         return result;
     }
+
+    /**
+     * 规划课程信息并返回
+     * @param credit
+     * @return
+     */
+    @GetMapping("getCoursePlan")
+    public Result getCoursePlan(double credit) {
+        Result result = courseService.getCoursePlan(credit);
+        System.out.println("result = " + result);
+        return result;
+    }
 }

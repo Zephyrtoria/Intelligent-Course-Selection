@@ -17,4 +17,12 @@ public interface CourseService extends IService<Course> {
      * @return
      */
     Result getAllCourses();
+
+    /**
+     * 获取课程规划
+     *
+     * @param credit
+     * @return
+     */
+    Result getCoursePlan(double credit);
 }
