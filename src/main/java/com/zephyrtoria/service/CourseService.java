@@ -4,6 +4,8 @@ import com.zephyrtoria.pojo.Course;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zephyrtoria.utils.Result;
 
+import java.util.List;
+
 /**
  * @author Lenovo
  * @description 针对表【course(课程)】的数据库操作Service
@@ -16,12 +18,21 @@ public interface CourseService extends IService<Course> {
      *
      * @return
      */
-    Result getAllCourses();
+    Result<Object> getAllCourses();
 
     /**
      * 获取课程规划
      * @param department
      * @return
      */
-    Result getCoursePlan(String department);
+    Result<Object> getCoursePlan(String department);
+
+    /**
+     * 规划最短课程
+     *
+     * @param department
+     * @param creditsLimit 学分上限
+     * @return
+     */
+    Result<Object> getFastestPlan(String department, List<Double> creditsLimit);
 }

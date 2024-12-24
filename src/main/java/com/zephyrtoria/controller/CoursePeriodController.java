@@ -5,7 +5,7 @@
  * @Version: 1.0
  */
 
-package com.zephyrtoria.dao;
+package com.zephyrtoria.controller;
 
 
 import org.springframework.web.bind.annotation.RestController;

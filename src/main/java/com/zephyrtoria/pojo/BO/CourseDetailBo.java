@@ -36,8 +36,10 @@ public class CourseDetailBo {
 
     private final List<String> outEdges;
 
-    // 入边。不需要考虑起点，只需要知道有几条就好啦！
-    private Integer inEdges;
+    private final List<String> inEdges;
+
+    // tempInEdges专门用于建图使用
+    private Integer tempInEdges;
 
     // 同一门课程不同老师，不共享的信息
     private final Map<String, Course> spToCourse;
@@ -55,13 +57,40 @@ public class CourseDetailBo {
         this.lastWeek = course.getLastWeek();
         succeed = new LinkedList<>();
         outEdges = new LinkedList<>();
-        inEdges = 0;
+        inEdges = new LinkedList<>();
+        tempInEdges = 0;
         spToCourse = new HashMap<>();
         spToPeriods = new HashMap<>();
     }
 
-    public boolean hasNoInEdge() {
-        return inEdges == 0;
+    // 只限于start和end使用
+    public CourseDetailBo(int index) {
+        this.index = index;
+        if (index == 0) {
+            this.courseBasicId = "start";
+            this.courseName = "start";
+        } else if (index == -1) {
+            this.courseBasicId = "end";
+            this.courseName = "end";
+        } else {
+            this.courseBasicId = null;
+            this.courseName = null;
+        }
+        this.credit = 0.0;
+        this.semester = null;
+        this.category = null;
+        this.begWeek = null;
+        this.lastWeek = null;
+        succeed = new ArrayList<>();
+        outEdges = new LinkedList<>();
+        inEdges = new ArrayList<>();
+        tempInEdges = 0;
+        spToCourse = new HashMap<>();
+        spToPeriods = new HashMap<>();
+    }
+
+    public boolean hasNoTempInEdge() {
+        return tempInEdges == 0;
     }
 
 
@@ -89,20 +118,17 @@ public class CourseDetailBo {
         }
     }
 
-    public boolean isInSucceed(String courseBasicId) {
-        return succeed.contains(courseBasicId);
-    }
-
     public void addOutEdge(String to) {
         outEdges.add(to);
     }
 
-    public void addInEdge() {
-        inEdges++;
+    public void addInEdge(String from) {
+        tempInEdges++;
+        inEdges.add(from);
     }
 
     public void deleteInEdge() {
-        inEdges--;
+        tempInEdges--;
     }
 
     public void addSucceed(String from) {
@@ -127,7 +153,7 @@ public class CourseDetailBo {
         for (String edge : outEdges) {
             sb.append(edge).append(", ");
         }
-        sb.append("}, inEdges=").append(inEdges);
+        sb.append("}, inEdges=").append(tempInEdges);
         sb.append(", spToCourse={");
         for (String s : spToCourse.keySet()) {
             sb.append(s).append(", ");

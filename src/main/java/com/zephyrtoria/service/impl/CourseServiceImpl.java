@@ -2,7 +2,8 @@ package com.zephyrtoria.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.zephyrtoria.algorithm.CourseGraph;
+import com.zephyrtoria.algorithm.BasicPlanGraph;
+import com.zephyrtoria.algorithm.FastestPlanGraph;
 import com.zephyrtoria.mapper.CoursePeriodMapper;
 import com.zephyrtoria.mapper.PrereqMapper;
 import com.zephyrtoria.mapper.SucceedMapper;
@@ -66,7 +67,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course>
         List<Succeed> succeeds = succeedMapper.selectList(null);
 
         // 建表
-        CourseGraph graph = new CourseGraph(courses, coursePeriods, prereqs, succeeds);
+        BasicPlanGraph graph = new BasicPlanGraph(courses, coursePeriods, prereqs, succeeds);
         graph.showData();
 
         // 获取课表
@@ -80,6 +81,36 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course>
         for (CourseTableVo courseTableVo : plan) {
             data.put("Semester" + courseTableVo.getSemesterId(), courseTableVo.convertToViewMode());
         }
+        return Result.ok(data);
+    }
+
+    @Override
+    public Result<Object> getFastestPlan(String department, List<Double> creditsLimit) {
+        // 读取数据
+        LambdaQueryWrapper<Course> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Course::getDepartment, department);
+        List<Course> courses = courseMapper.selectList(wrapper);
+        List<CoursePeriod> coursePeriods = coursePeriodMapper.selectList(null);
+        List<Prereq> prereqs = prereqMapper.selectList(null);
+        List<Succeed> succeeds = succeedMapper.selectList(null);
+
+        // 建表
+        FastestPlanGraph graph = new FastestPlanGraph(courses, coursePeriods, prereqs, succeeds);
+        graph.showData();
+
+        List<List<String>> courseList = graph.AOEForFastestPlan(creditsLimit);
+        if (courseList == null) {
+            return Result.build(null, ResultCodeEnum.ERROR);
+        }
+
+        Map<String, List<String>> semesters = new HashMap<>();
+        for (int i = 0; i < 8; i++) {
+            semesters.put("semester" + (i + 1), courseList.get(i));
+
+        }
+        Map<String, Map<String, List<String>>> data = new HashMap<>();
+        data.put("semesters", semesters);
+
         return Result.ok(data);
     }
 }

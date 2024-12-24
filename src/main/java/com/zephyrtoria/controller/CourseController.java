@@ -5,8 +5,9 @@
  * @Version: 1.0
  */
 
-package com.zephyrtoria.dao;
+package com.zephyrtoria.controller;
 
+import com.zephyrtoria.pojo.VO.CreditsLimitVo;
 import com.zephyrtoria.service.CourseService;
 import com.zephyrtoria.utils.Result;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,8 @@ public class CourseController {
      * @return
      */
     @GetMapping("getAllCourses")
-    public Result getAllCourse() {
-        Result result = courseService.getAllCourses();
+    public Result<Object> getAllCourse() {
+        Result<Object> result = courseService.getAllCourses();
         System.out.println("result = " + result);
         return result;
     }
@@ -34,12 +35,20 @@ public class CourseController {
 
     /**
      * 普通规划课程
+     *
      * @param department 根据院系划分
      * @return
      */
     @GetMapping("getCoursePlan")
-    public Result getCoursePlan(String department) {
-        Result result = courseService.getCoursePlan(department);
+    public Result<Object> getCoursePlan(String department) {
+        Result<Object> result = courseService.getCoursePlan(department);
+        System.out.println("result = " + result);
+        return result;
+    }
+
+    @PostMapping("getFastestPlan")
+    public Result<Object> getFastestPlan(@RequestBody CreditsLimitVo creditsLimit) {
+        Result<Object> result = courseService.getFastestPlan(creditsLimit.getDepartment(), creditsLimit.getCreditsLimit());
         System.out.println("result = " + result);
         return result;
     }

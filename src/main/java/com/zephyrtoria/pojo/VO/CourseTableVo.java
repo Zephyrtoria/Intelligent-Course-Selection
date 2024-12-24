@@ -10,10 +10,11 @@ package com.zephyrtoria.pojo.VO;
 import com.zephyrtoria.pojo.BO.CourseDetailBo;
 import com.zephyrtoria.pojo.Course;
 import com.zephyrtoria.pojo.CoursePeriod;
-import lombok.Data;
 import lombok.Getter;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class CourseTableVo {
@@ -125,9 +126,9 @@ public class CourseTableVo {
             for (int j = 1; j <= TIME_PARTITION; j++) {
                 for (int k = 1; k <= DAYS; k++) {
                     if (tables[i][k][j] != null) {
-                        sb.append(tables[i][k][j].getCourseName()).append("\t\t");
+                        sb.append(tables[i][k][j].getCourseName()).append("\t\t\t\t");
                     } else {
-                        sb.append("null\t\t");
+                        sb.append("无\t\t\t\t");
                     }
                 }
                 sb.append('\n');
@@ -139,14 +140,14 @@ public class CourseTableVo {
 
     public Map convertToViewMode() {
         Map result = new HashMap();
-        String[][] names = new String[DAYS + 1][TIME_PARTITION + 1];
+        String[][] names = new String[DAYS][TIME_PARTITION];
         for (int i = 1; i <= WEEKS; i++) {
             for (int j = 1; j <= DAYS; j++) {
                 for (int k = 1; k <= TIME_PARTITION; k++) {
                     if (tables[i][j][k] != null) {
-                        names[j][k] = tables[i][j][k].getCourseName();
+                        names[j - 1][k - 1] = tables[i][j][k].getCourseName();
                     } else {
-                        names[j][k] = "";
+                        names[j - 1][k - 1] = "";
                     }
                 }
             }
