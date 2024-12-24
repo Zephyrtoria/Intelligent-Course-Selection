@@ -31,14 +31,15 @@ public class CourseController {
         return result;
     }
 
+
     /**
-     * 规划课程信息并返回
-     * @param credit
+     * 普通规划课程
+     * @param department 根据院系划分
      * @return
      */
     @GetMapping("getCoursePlan")
-    public Result getCoursePlan(double credit) {
-        Result result = courseService.getCoursePlan(credit);
+    public Result getCoursePlan(String department) {
+        Result result = courseService.getCoursePlan(department);
         System.out.println("result = " + result);
         return result;
     }

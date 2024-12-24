@@ -9,41 +9,44 @@ package com.zephyrtoria.pojo.BO;
 
 import com.zephyrtoria.pojo.Course;
 import com.zephyrtoria.pojo.CoursePeriod;
-import com.zephyrtoria.pojo.Prereq;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
 import java.util.*;
 
-@Data
-@NoArgsConstructor
+@Getter
 public class CourseDetailBo {
     // 同一门课程共享的信息
-    private String courseBasicId;
+    private final Integer index;
 
-    private String courseName;
+    private final String courseBasicId;
 
-    private String semester;
+    private final String courseName;
 
-    private String category;
+    private final String semester;
 
-    private Double credit;
+    private final String category;
 
-    private Integer begWeek;
+    private final Double credit;
 
-    private Integer lastWeek;
+    private final Integer begWeek;
 
-    // 区分succeed和edges
-    private List<String> succeed;
+    private final Integer lastWeek;
 
-    private List<String> edges;
+    // 区分succeed和outEdge
+    private final List<String> succeed;
+
+    private final List<String> outEdges;
+
+    // 入边。不需要考虑起点，只需要知道有几条就好啦！
+    private Integer inEdges;
 
     // 同一门课程不同老师，不共享的信息
-    private Map<String, Course> spToCourse;
+    private final Map<String, Course> spToCourse;
     // 根据courseSpId来获取对应的CoursePeriod，且一门课会对应多个CoursePeriod，所以采用容器存储
-    private Map<String, List<CoursePeriod>> spToPeriods;
+    private final Map<String, List<CoursePeriod>> spToPeriods;
 
-    public CourseDetailBo(Course course) {
+    public CourseDetailBo(int index, Course course) {
+        this.index = index;
         this.courseBasicId = course.getCourseBasicId();
         this.courseName = course.getCourseName();
         this.semester = course.getSemester();
@@ -52,9 +55,14 @@ public class CourseDetailBo {
         this.begWeek = course.getBegWeek();
         this.lastWeek = course.getLastWeek();
         succeed = new LinkedList<>();
-        edges = new LinkedList<>();
+        outEdges = new LinkedList<>();
+        inEdges = 0;
         spToCourse = new HashMap<>();
         spToPeriods = new HashMap<>();
+    }
+
+    public boolean hasNoInEdge() {
+        return inEdges == 0;
     }
 
 
@@ -82,9 +90,20 @@ public class CourseDetailBo {
         }
     }
 
+    public boolean isInSucceed(String courseBasicId) {
+        return succeed.contains(courseBasicId);
+    }
 
-    public void addEdges(String to) {
-        edges.add(to);
+    public void addOutEdge(String to) {
+        outEdges.add(to);
+    }
+
+    public void addInEdge() {
+        inEdges++;
+    }
+
+    public void deleteInEdge() {
+        inEdges--;
     }
 
     public void addSucceed(String to) {
@@ -105,11 +124,12 @@ public class CourseDetailBo {
         for (String s : succeed) {
             sb.append(s).append(", ");
         }
-        sb.append("}, edges={");
-        for (String edge : edges) {
+        sb.append("}, outEdges={");
+        for (String edge : outEdges) {
             sb.append(edge).append(", ");
         }
-        sb.append("}, spToCourse={");
+        sb.append("}, inEdges=").append(inEdges);
+        sb.append(", spToCourse={");
         for (String s : spToCourse.keySet()) {
             sb.append(s).append(", ");
         }
@@ -123,6 +143,10 @@ public class CourseDetailBo {
         }
         sb.append("}");
         return sb.toString();
+    }
+
+    public Course getCourseBySp(String sp) {
+        return spToCourse.get(sp);
     }
 
     @Override

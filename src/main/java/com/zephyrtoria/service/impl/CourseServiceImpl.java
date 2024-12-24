@@ -1,5 +1,6 @@
 package com.zephyrtoria.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zephyrtoria.algorithm.CourseGraph;
 import com.zephyrtoria.mapper.CoursePeriodMapper;
@@ -9,6 +10,7 @@ import com.zephyrtoria.pojo.Course;
 import com.zephyrtoria.pojo.CoursePeriod;
 import com.zephyrtoria.pojo.Prereq;
 import com.zephyrtoria.pojo.Succeed;
+import com.zephyrtoria.pojo.VO.CourseTableVo;
 import com.zephyrtoria.service.CourseService;
 import com.zephyrtoria.mapper.CourseMapper;
 import com.zephyrtoria.utils.Result;
@@ -16,7 +18,9 @@ import com.zephyrtoria.utils.ResultCodeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Lenovo
@@ -46,21 +50,37 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course>
     }
 
     /**
-     * 规划课表
+     * 获取课程规划
      *
-     * @param credit
+     * @param department
      * @return
      */
     @Override
-    public Result getCoursePlan(double credit) {
-        List<Course> courses = courseMapper.selectList(null);
+    public Result getCoursePlan(String department) {
+        // 读取数据
+        LambdaQueryWrapper<Course> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Course::getDepartment, department);
+        List<Course> courses = courseMapper.selectList(wrapper);
         List<CoursePeriod> coursePeriods = coursePeriodMapper.selectList(null);
         List<Prereq> prereqs = prereqMapper.selectList(null);
         List<Succeed> succeeds = succeedMapper.selectList(null);
+
+        // 建表
         CourseGraph graph = new CourseGraph(courses, coursePeriods, prereqs, succeeds);
         graph.showData();
 
-        return null;
+        // 获取课表
+        List<CourseTableVo> plan = graph.createPlan();
+        for (CourseTableVo courseTableVo : plan) {
+            System.out.println(courseTableVo.toString());
+        }
+        // 返回结果
+
+        Map data = new HashMap<>();
+        for (CourseTableVo courseTableVo : plan) {
+            data.put("Semester" + courseTableVo.getSemesterId(), courseTableVo.convertToViewMode());
+        }
+        return Result.ok(data);
     }
 }
 
