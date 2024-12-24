@@ -32,7 +32,6 @@ public class CourseDetailBo {
 
     private final Integer lastWeek;
 
-    // 区分succeed和outEdge
     private final List<String> succeed;
 
     private final List<String> outEdges;
@@ -106,8 +105,8 @@ public class CourseDetailBo {
         inEdges--;
     }
 
-    public void addSucceed(String to) {
-        succeed.add(to);
+    public void addSucceed(String from) {
+        succeed.add(from);
     }
 
     @Override

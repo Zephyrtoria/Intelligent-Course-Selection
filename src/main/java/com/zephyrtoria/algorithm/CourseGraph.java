@@ -132,13 +132,13 @@ public final class CourseGraph {
                 // 取出队列元素
                 int curRoundSize = spring.size();
                 while (curRoundSize-- > 0) {
-                    addCourseToTable(spring, visited, curRoundSemester);
+                    addCourseToTable(spring, autumn, visited, curRoundSemester);
                 }
             } else {
                 // autumn
                 int curRoundSize = autumn.size();
                 while (curRoundSize-- > 0) {
-                    addCourseToTable(autumn, visited, curRoundSemester);
+                    addCourseToTable(autumn, spring, visited, curRoundSemester);
                 }
             }
             addTopologicalItem(spring, autumn, visited);
@@ -151,7 +151,6 @@ public final class CourseGraph {
 
 
     private void addTopologicalItem(Deque<CourseDetailBo> spring, Deque<CourseDetailBo> autumn, boolean[] visited) {
-        // TODO: succeed处理
         for (CourseDetailBo eachCourse : graph) {
             // 加入队列元素
             // 入度为0的加入队列末尾，如果入度为0且是后继课程则加入队首，注意加入哪个队列要判断属性
@@ -169,13 +168,18 @@ public final class CourseGraph {
         }
     }
 
-    private void addCourseToTable(Deque<CourseDetailBo> queue, boolean[] visited, CourseTableVo curRoundSemester) {
+    private void addCourseToTable(Deque<CourseDetailBo> queue, Deque<CourseDetailBo> nextQueue, boolean[] visited, CourseTableVo curRoundSemester) {
         CourseDetailBo curCourse = queue.removeFirst();
         // 判断是否能加入课程表
         if (curRoundSemester.insertTime(curCourse)) {
             // 加入成功，删除该节点，以及对应边
             deleteNode(curCourse);
             visited[curCourse.getIndex()] = true;
+            for (String succeed : curCourse.getSucceed()) {
+                if (!visited[basicIdToIndex.get(succeed)]) {
+                    nextQueue.addFirst(getCourseBo(succeed));
+                }
+            }
         } else {
             // 加入失败，放回队列，这样子下一轮就会是最先出队
             queue.addLast(curCourse);
