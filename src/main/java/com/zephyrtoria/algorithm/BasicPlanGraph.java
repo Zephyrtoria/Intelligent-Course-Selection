@@ -13,6 +13,7 @@ import com.zephyrtoria.pojo.CoursePeriod;
 import com.zephyrtoria.pojo.Prereq;
 import com.zephyrtoria.pojo.Succeed;
 import com.zephyrtoria.pojo.VO.CourseTableVo;
+import com.zephyrtoria.pojo.VO.TimeLimitedVo;
 
 import java.util.*;
 
@@ -21,8 +22,12 @@ public final class BasicPlanGraph extends BaseGraph {
         super(courses, coursePeriodList, prereqs, succeeds);
     }
 
-    public List<CourseTableVo> createPlan() {
+    public List<CourseTableVo> createPlan(TimeLimitedVo timeLimitedVo) {
         List<CourseTableVo> result = new ArrayList<>(8);
+        for (int i = 1; i <= 8; i++) {
+            result.add(new CourseTableVo(i, timeLimitedVo));
+        }
+
         boolean[] visited = new boolean[n];
 
         // 拓扑排序
@@ -40,7 +45,7 @@ public final class BasicPlanGraph extends BaseGraph {
         boolean semesterFlag = false;
         int round = 1;
         while (round <= 8) {
-            CourseTableVo curRoundSemester = new CourseTableVo(round);
+            CourseTableVo curRoundSemester = result.get(round - 1);
             if (round % 2 == 0 && spring.isEmpty() || round % 2 == 1 && autumn.isEmpty()) {
                 round++;
                 continue;
@@ -62,8 +67,11 @@ public final class BasicPlanGraph extends BaseGraph {
             addTopologicalItem(spring, autumn, visited);
             round++;
             semesterFlag = !semesterFlag;
-            result.add(curRoundSemester);
         }
+        if (!spring.isEmpty() || !autumn.isEmpty()) {
+            return null;
+        }
+
         return result;
     }
 

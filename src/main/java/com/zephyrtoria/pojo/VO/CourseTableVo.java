@@ -22,6 +22,7 @@ public class CourseTableVo {
     private final static Integer DAYS = 7;
     private final static Integer WEEKS = 18;    // 从1开始
     private final static Map<String, Integer> WEEK_TO_INDEX;
+    private final static Course takeUp;
 
     static {
         WEEK_TO_INDEX = new HashMap<>();
@@ -32,6 +33,8 @@ public class CourseTableVo {
         WEEK_TO_INDEX.put("Fri", 5);
         WEEK_TO_INDEX.put("Sat", 6);
         WEEK_TO_INDEX.put("Son", 7);
+        takeUp = new Course();
+        takeUp.setCourseBasicId("takeUp");
     }
 
     @Getter
@@ -39,9 +42,21 @@ public class CourseTableVo {
 
     private final Course[][][] tables;
 
-    public CourseTableVo(int semesterId) {
+    public CourseTableVo(int semesterId, TimeLimitedVo timeLimitedVo) {
         this.semesterId = semesterId;
         tables = new Course[WEEKS + 1][DAYS + 1][TIME_PARTITION + 1];
+
+        // 设置时间限制
+        if (timeLimitedVo.getHasTimeLimited() == 1) {
+            for (int i = 1; i <= WEEKS; i++) {
+                for (TimeLimitedVo.Period period : timeLimitedVo.getPeriods()) {
+                    int day = WEEK_TO_INDEX.get(period.getDay());
+                    for (int count = 0, j = period.getBeg(); count < period.getLast(); count++, j++) {
+                        tables[i][day][j] = takeUp;
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -125,7 +140,7 @@ public class CourseTableVo {
             sb.append("WEEK").append(i).append('\n');
             for (int j = 1; j <= TIME_PARTITION; j++) {
                 for (int k = 1; k <= DAYS; k++) {
-                    if (tables[i][k][j] != null) {
+                    if (tables[i][k][j] != null && tables[i][k][j] != takeUp) {
                         sb.append(tables[i][k][j].getCourseName()).append("\t\t\t\t");
                     } else {
                         sb.append("无\t\t\t\t");
@@ -144,7 +159,7 @@ public class CourseTableVo {
         for (int i = 1; i <= WEEKS; i++) {
             for (int j = 1; j <= DAYS; j++) {
                 for (int k = 1; k <= TIME_PARTITION; k++) {
-                    if (tables[i][j][k] != null) {
+                    if (tables[i][j][k] != null && tables[i][j][k] != takeUp) {
                         names[j - 1][k - 1] = tables[i][j][k].getCourseName();
                     } else {
                         names[j - 1][k - 1] = "";

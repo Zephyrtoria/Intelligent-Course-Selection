@@ -13,6 +13,7 @@ import com.zephyrtoria.pojo.CoursePeriod;
 import com.zephyrtoria.pojo.Prereq;
 import com.zephyrtoria.pojo.Succeed;
 import com.zephyrtoria.pojo.VO.CourseTableVo;
+import com.zephyrtoria.pojo.VO.TimeLimitedVo;
 import com.zephyrtoria.service.CourseService;
 import com.zephyrtoria.utils.Result;
 import com.zephyrtoria.utils.ResultCodeEnum;
@@ -53,14 +54,14 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course>
     /**
      * 获取课程规划
      *
-     * @param department
+     * @param timeLimitedVo
      * @return
      */
     @Override
-    public Result getCoursePlan(String department) {
+    public Result getCoursePlan(TimeLimitedVo timeLimitedVo) {
         // 读取数据
         LambdaQueryWrapper<Course> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Course::getDepartment, department);
+        wrapper.eq(Course::getDepartment, timeLimitedVo.getDepartment());
         List<Course> courses = courseMapper.selectList(wrapper);
         List<CoursePeriod> coursePeriods = coursePeriodMapper.selectList(null);
         List<Prereq> prereqs = prereqMapper.selectList(null);
@@ -71,10 +72,14 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course>
         graph.showData();
 
         // 获取课表
-        List<CourseTableVo> plan = graph.createPlan();
-        for (CourseTableVo courseTableVo : plan) {
-            System.out.println(courseTableVo.toString());
+        List<CourseTableVo> plan = graph.createPlan(timeLimitedVo);
+        if (plan == null) {
+            return Result.build(null, ResultCodeEnum.ERROR);
         }
+
+/*        for (CourseTableVo courseTableVo : plan) {
+            System.out.println(courseTableVo.toString());
+        }*/
         // 返回结果
 
         Map data = new HashMap<>();

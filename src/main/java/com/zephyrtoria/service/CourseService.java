@@ -2,6 +2,7 @@ package com.zephyrtoria.service;
 
 import com.zephyrtoria.pojo.Course;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zephyrtoria.pojo.VO.TimeLimitedVo;
 import com.zephyrtoria.utils.Result;
 
 import java.util.List;
@@ -22,10 +23,10 @@ public interface CourseService extends IService<Course> {
 
     /**
      * 获取课程规划
-     * @param department
+     * @param timeLimitedVo
      * @return
      */
-    Result<Object> getCoursePlan(String department);
+    Result<Object> getCoursePlan(TimeLimitedVo timeLimitedVo);
 
     /**
      * 规划最短课程

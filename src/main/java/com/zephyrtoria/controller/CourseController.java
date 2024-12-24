@@ -8,6 +8,7 @@
 package com.zephyrtoria.controller;
 
 import com.zephyrtoria.pojo.VO.CreditsLimitVo;
+import com.zephyrtoria.pojo.VO.TimeLimitedVo;
 import com.zephyrtoria.service.CourseService;
 import com.zephyrtoria.utils.Result;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,15 +37,16 @@ public class CourseController {
     /**
      * 普通规划课程
      *
-     * @param department 根据院系划分
+     * @param timeLimitedVo 根据院系划分，还有时间限制
      * @return
      */
-    @GetMapping("getCoursePlan")
-    public Result<Object> getCoursePlan(String department) {
-        Result<Object> result = courseService.getCoursePlan(department);
+    @PostMapping("getCoursePlan")
+    public Result<Object> getCoursePlan(@RequestBody TimeLimitedVo timeLimitedVo) {
+        Result<Object> result = courseService.getCoursePlan(timeLimitedVo);
         System.out.println("result = " + result);
         return result;
     }
+
 
     @PostMapping("getFastestPlan")
     public Result<Object> getFastestPlan(@RequestBody CreditsLimitVo creditsLimit) {
