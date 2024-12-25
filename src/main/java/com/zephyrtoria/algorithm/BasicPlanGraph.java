@@ -28,15 +28,15 @@ public final class BasicPlanGraph extends BaseGraph {
             result.add(new CourseTableVo(i, timeLimitedVo));
         }
 
-        boolean[] visited = new boolean[n];
+        boolean[] visited = new boolean[n + 1];
 
         // 拓扑排序
         Deque<CourseDetailBo> spring = new LinkedList<>();
         Deque<CourseDetailBo> autumn = new LinkedList<>();
         for (CourseDetailBo eachCourse : graph) {
-            String AUTUMN = "Fall";
-            if (eachCourse.hasNoTempInEdge() && eachCourse.getSemester().equals(AUTUMN)) {
-                visited[eachCourse.getIndex()] = true;
+            // 入度为0，且为秋季课程
+            if (eachCourse.hasNoTempInEdge() && eachCourse.getSemester().equals("Fall")) {
+                visited[getIndexByCourseBo(eachCourse)] = true;
                 autumn.addLast(eachCourse);
             }
         }
@@ -81,16 +81,15 @@ public final class BasicPlanGraph extends BaseGraph {
             // 加入队列元素
             // 入度为0的加入队列末尾，如果入度为0且是后继课程则加入队首，注意加入哪个队列要判断属性
             // 寻找入度为0的点
-            if (!visited[eachCourse.getIndex()] && eachCourse.hasNoTempInEdge()) {
-                String SPRING = "Spring";
-                if (eachCourse.getSemester().equals(SPRING)) {
+            if (!visited[getIndexByCourseBo(eachCourse)] && eachCourse.hasNoTempInEdge()) {
+                if (eachCourse.getSemester().equals("Spring")) {
                     // 春季学期课程
                     spring.addLast(eachCourse);
                 } else {
                     // 秋季学期
                     autumn.addLast(eachCourse);
                 }
-                visited[eachCourse.getIndex()] = true;
+                visited[getIndexByCourseBo(eachCourse)] = true;
             }
         }
     }
@@ -101,9 +100,12 @@ public final class BasicPlanGraph extends BaseGraph {
         if (curRoundSemester.insertTime(curCourse)) {
             // 加入成功，删除该节点，以及对应边
             deleteNode(curCourse);
-            visited[curCourse.getIndex()] = true;
+            visited[getIndexByCourseBo(curCourse)] = true;
+            // 处理succeed
             for (String succeed : curCourse.getSucceed()) {
-                if (!visited[basicIdToIndex.get(succeed)]) {
+                Integer idx = basicIdToIndex.get(succeed);
+                if (!visited[idx]) {
+                    visited[idx] = true;
                     nextQueue.addFirst(getCourseBo(succeed));
                 }
             }

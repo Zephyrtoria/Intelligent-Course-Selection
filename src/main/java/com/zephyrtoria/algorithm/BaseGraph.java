@@ -91,6 +91,9 @@ public class BaseGraph {    // 邻接表
         }
     }
 
+    protected int getIndexByCourseBo(CourseDetailBo courseDetailBo) {
+        return basicIdToIndex.get(courseDetailBo.getCourseBasicId());
+    }
 
     protected CourseDetailBo getCourseBo(String courseBasicId) {
         return graph.get(basicIdToIndex.get(courseBasicId));

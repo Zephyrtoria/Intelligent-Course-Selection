@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Lenovo
@@ -78,14 +79,27 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course>
         }
 
 /*        for (CourseTableVo courseTableVo : plan) {
-            System.out.println(courseTableVo.toString());
+            System.out.println(courseTableVo);
         }*/
-        // 返回结果
 
-        Map data = new HashMap<>();
+        // 返回结果
+        Map<String, Map<String, String[][]>> data = new HashMap<>();
         for (CourseTableVo courseTableVo : plan) {
+/*            Set<Map.Entry<String, String[][]>> entries = courseTableVo.convertToViewMode().entrySet();
+            for (Map.Entry<String, String[][]> entry : entries) {
+                String[][] values = entry.getValue();
+                for (int i = 0; i < values.length; i++) {
+                    for (int j = 0; j < values[i].length; j++) {
+                        if (!values[i][j].isBlank()) {
+                            System.out.println(values[i][j]);
+                        }
+                    }
+                }
+            }*/
             data.put("Semester" + courseTableVo.getSemesterId(), courseTableVo.convertToViewMode());
         }
+
+
         return Result.ok(data);
     }
 
@@ -115,6 +129,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course>
         }
         Map<String, Map<String, List<String>>> data = new HashMap<>();
         data.put("semesters", semesters);
+
 
         return Result.ok(data);
     }

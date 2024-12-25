@@ -153,10 +153,10 @@ public class CourseTableVo {
         return sb.toString();
     }
 
-    public Map convertToViewMode() {
-        Map result = new HashMap();
-        String[][] names = new String[DAYS][TIME_PARTITION];
+    public Map<String, String[][]> convertToViewMode() {
+        Map<String, String[][]> result = new HashMap<>();
         for (int i = 1; i <= WEEKS; i++) {
+            String[][] names = new String[DAYS][TIME_PARTITION];
             for (int j = 1; j <= DAYS; j++) {
                 for (int k = 1; k <= TIME_PARTITION; k++) {
                     if (tables[i][j][k] != null && tables[i][j][k] != takeUp) {
