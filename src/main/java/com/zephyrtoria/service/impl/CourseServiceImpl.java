@@ -70,7 +70,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course>
 
         // 建表
         BasicPlanGraph graph = new BasicPlanGraph(courses, coursePeriods, prereqs, succeeds);
-        graph.showData();
+        // graph.showData();
 
         // 获取课表
         List<CourseTableVo> plan = graph.createPlan(timeLimitedVo);
@@ -115,7 +115,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course>
 
         // 建表
         FastestPlanGraph graph = new FastestPlanGraph(courses, coursePeriods, prereqs, succeeds);
-        graph.showData();
+        // graph.showData();
 
         List<List<String>> courseList = graph.AOEForFastestPlan(creditsLimit);
         if (courseList == null) {
