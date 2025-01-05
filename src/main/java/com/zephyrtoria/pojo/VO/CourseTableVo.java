@@ -51,7 +51,7 @@ public class CourseTableVo {
             for (int i = 1; i <= WEEKS; i++) {
                 for (TimeLimitedVo.Period period : timeLimitedVo.getPeriods()) {
                     int day = WEEK_TO_INDEX.get(period.getDay());
-                    for (int count = 0, j = period.getBeg(); count < period.getLast(); count++, j++) {
+                    for (int count = 0, j = period.getBeg() + 1; count < period.getLast(); count++, j++) {
                         tables[i][day][j] = takeUp;
                     }
                 }
@@ -140,10 +140,12 @@ public class CourseTableVo {
             sb.append("WEEK").append(i).append('\n');
             for (int j = 1; j <= TIME_PARTITION; j++) {
                 for (int k = 1; k <= DAYS; k++) {
-                    if (tables[i][k][j] != null && tables[i][k][j] != takeUp) {
-                        sb.append(tables[i][k][j].getCourseName()).append("\t\t\t\t");
-                    } else {
+                    if (tables[i][k][j] == null) {
                         sb.append("无\t\t\t\t");
+                    } else if (tables[i][k][j] == takeUp) {
+                        sb.append("占用\t\t\t\t");
+                    } else {
+                        sb.append(tables[i][k][j].getCourseName()).append("\t\t\t\t");
                     }
                 }
                 sb.append('\n');

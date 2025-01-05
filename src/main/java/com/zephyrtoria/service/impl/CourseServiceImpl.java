@@ -77,10 +77,10 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course>
         if (plan == null) {
             return Result.build(null, ResultCodeEnum.ERROR);
         }
-
 /*        for (CourseTableVo courseTableVo : plan) {
             System.out.println(courseTableVo);
         }*/
+
 
         // 返回结果
         Map<String, Map<String, String[][]>> data = new HashMap<>();
